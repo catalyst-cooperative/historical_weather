@@ -1,0 +1,30 @@
+name: gsod
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python~=3.9.0
+  - python-dotenv
+
+  - pandas
+  - geopandas
+  - numpy
+  - scipy
+  - scikit-learn
+  - statsmodels
+
+  - jupyterlab
+  - seaborn
+  - matplotlib
+  - basemap
+  - altair
+
+  - black
+  - isort
+  - mypy
+  - flake8
+  - pytest
+  - pre-commit
+
+  #- pip:
+  #  - --editable ../[doc,test,dev,datasette]
