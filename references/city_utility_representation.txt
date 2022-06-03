@@ -1,0 +1,24 @@
+city utility representation.
+Map of PRIVATE utilities here: https://static.seekingalpha.com/uploads/2018/3/14/37137-15210492044446812_origin.png
+BA network diagram: https://drive.tiny.cloud/1/8cadf6pkwkhsiz9mruuj1hgybj2xd7ww2v1as8ktymfewkug/451b5c93-2c82-411c-a67f-10c464cf8388
+
+Phoenix: APS, which includes a ton of other stuff. SRP looks rural only (keyholed cities under APS)
+Tucson: Tucson Electric Power
+Los Angeles: LADWP. Small territory but contained and hopefully consistent. SCE is sprawling.
+San Francisco: PG&E is sprawling. No good option that I see.
+San Diego: SDG&E
+Denver: Xcel, but they cover random other stuff in other states too
+Boise: Idaho Power, but they cover smaller towns all down the Snake River too
+Billings: NorthWestern Energy, but sprawling territory
+Las Vegas: NV Energy serves both Reno and LV, plus random small towns in the western half of the state
+Reno: see above
+Albuquerque: Public Service Company of New Mexico (PNM), but they serve most urban load in the state, including Santa Fe and clusters of towns in the SW and S of the state.
+Portland: PGE, but misses northern part of city and includes Salem
+Eugene: bunch of coops and PUDs, looks messy. Eugene Water & Electric is city center.
+Salt Lake City: Rocky Mountain Power aka PacifiCorp. Huge territory spanning most of Utah and Wyoming, part of Eastern Idaho.
+Seattle: Seattle City Light. Puget Sound Energy is bigger but spread out
+Spokane: Avista, but they cover lots of small cities in Eastern WA and N Idaho. There are a few co-ops too.
+Cheyenne: Black Hills Energy (some territory in the middle of CO and Rapid City, SD too)
+Calgary: AESO, which breaks out Calgary and Edmonton load specifically (hourly load data here: https://www.aeso.ca/market/market-and-system-reporting/data-requests/hourly-load-by-area-and-region/)
+Edmonton: AESO, see above
+Vancouver: BC Hydro (hourly load data here: https://www.bchydro.com/energy-in-bc/operations/transmission/transmission-system/balancing-authority-load-data/historical-transmission-data.html)
