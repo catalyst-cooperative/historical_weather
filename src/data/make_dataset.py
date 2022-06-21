@@ -17,7 +17,11 @@ def get_station_metadata(path: Optional[Path] = None) -> pd.DataFrame:
     return station_meta
 
 
-def remove_data_pre_1973_if_gap(subset: pd.DataFrame) -> pd.DataFrame:
+def _remove_data_pre_1973_if_gap(subset: pd.DataFrame) -> pd.DataFrame:
+    """Look for a gap of missing data in the early 1970s and remove data prior to 1973 if found.
+
+    This gap corresponds with station consistency changes that warrant removal of data prior to 1973.
+    """
     annual_counts = (
         subset.loc[idx[:, :, "1970":"1977"]]
         .groupby([pd.Grouper(level="usaf"), pd.Grouper(level="wban"), pd.Grouper(level="timestamp", freq="AS")])[
@@ -34,7 +38,8 @@ def remove_data_pre_1973_if_gap(subset: pd.DataFrame) -> pd.DataFrame:
     return subset.loc[mask, :]
 
 
-def subset_stations_again(subset: pd.DataFrame) -> pd.DataFrame:
+def _subset_stations_again(subset: pd.DataFrame) -> pd.DataFrame:
+    """Drop unused candidate stations (mostly splice candidates)."""
     to_drop = {
         ("999999", "24033"),  # billings muni
         ("999999", "24131"),  # boise air terminal
@@ -65,6 +70,7 @@ def subset_stations_again(subset: pd.DataFrame) -> pd.DataFrame:
 
 
 def get_subset():
+    """Load GSOD data and subset it to relevant columns and candidate stations."""
     gsod = load.get_gsod()
     station_meta = get_station_metadata()
     subset_cols = [
@@ -88,14 +94,16 @@ def get_subset():
 
 
 def make_dataset() -> pd.DataFrame:
+    """Make final dataset that exists in data/processed/historical_weather_data.csv"""
     subset = get_subset()
     subset = clean_precip_data(subset)
-    subset = subset_stations_again(subset)
-    subset = remove_data_pre_1973_if_gap(subset)
+    subset = _subset_stations_again(subset)
+    subset = _remove_data_pre_1973_if_gap(subset)
     return subset
 
 
 def main(out_path: Optional[Path] = None) -> None:
+    """Make final dataset and save it to data/processed/historical_weather_data.csv"""
     if out_path is None:
         out_path = Path(__file__).resolve().parents[2] / "data/processed/historical_weather_data.csv"
     subset = make_dataset()
