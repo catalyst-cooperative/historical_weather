@@ -1,12 +1,14 @@
-from typing import List, Optional, Tuple, Union
-import pandas as pd
-import numpy as np
 from pathlib import Path
+from typing import List, Optional, Tuple, Union
+
+import numpy as np
+import pandas as pd
 
 idx = pd.IndexSlice
 
 
 def _load_erroneous_precip_points(path=None) -> pd.MultiIndex:
+    """Load ids of manually determined spikes. See notebook 07 for distribution analysis."""
     if path is None:
         path = Path(__file__).resolve().parents[2] / "data/processed/erroneous_precip_points.csv"
     data = pd.read_csv(path, parse_dates=["timestamp"], dtype={"usaf": str, "wban": str})
@@ -15,6 +17,7 @@ def _load_erroneous_precip_points(path=None) -> pd.MultiIndex:
 
 
 def _load_erroneous_precip_years(path: Optional[Path] = None) -> List[Tuple[str, str, slice]]:
+    """Load ids of manually determined near-zero precipitation years. See notebook 07 for analysis."""
     if path is None:
         path = Path(__file__).resolve().parents[2] / "data/processed/erroneous_precip_years.csv"
     data = pd.read_csv(path, dtype=str)
@@ -23,6 +26,7 @@ def _load_erroneous_precip_years(path: Optional[Path] = None) -> List[Tuple[str,
 
 
 def _find_implausible_annual_totals(df: pd.DataFrame) -> List[Tuple[str, str, slice]]:
+    """Automatic detection of near-zero precipitation years. See notebook 07 for analysis."""
     annual_precip = df.groupby(
         [pd.Grouper(level="usaf"), pd.Grouper(level="wban"), pd.Grouper(level="timestamp", freq="AS")]
     )["precipitation_total_inches"].agg(["sum", "count"])
@@ -41,6 +45,13 @@ def set_manual_exclusions_to_nan(
     exclusion_idx: Union[pd.MultiIndex, List[Tuple[str, str, slice]]],
     column="precipitation_total_inches",
 ) -> None:
+    """Apply manual data removals in place.
+
+    Args:
+        df (pd.DataFrame): GSOD subset
+        exclusion_idx (Union[pd.MultiIndex, List[Tuple[str, str, slice]]]): indices of data to remove
+        column (str, optional): which column to apply removals to. Defaults to "precipitation_total_inches".
+    """
     if isinstance(exclusion_idx, pd.MultiIndex):
         df.loc[exclusion_idx, column] = np.nan
     elif isinstance(exclusion_idx, list):
@@ -50,6 +61,7 @@ def set_manual_exclusions_to_nan(
 
 
 def _test_1973_garbage_data(df: pd.DataFrame) -> pd.Series:
+    """Test for presence of erroneous behavior in 1973. See notebook 07 for analysis."""
     if tuple(df.index.names) != ("usaf", "wban", "timestamp"):
         raise ValueError("Expect index of (usaf, wban, timestamp)")
     grp = df.loc[:, "precipitation_total_inches"].groupby(level=["usaf", "wban"])
@@ -58,6 +70,7 @@ def _test_1973_garbage_data(df: pd.DataFrame) -> pd.Series:
 
 
 def _precip_zscore(grp_series: pd.Series):
+    """Test for presence of erroneous behavior; designed for 1973 problems."""
     # compare the first 5 months of each year
     seventy_three = grp_series.loc[idx[:, :, "1973-01-01":"1973-05-31"]]
     if len(seventy_three) < 100:  # bad coverage
@@ -73,6 +86,7 @@ def _precip_zscore(grp_series: pd.Series):
 
 
 def remove_garbage_data_1973(df: pd.DataFrame, zscore_thresh=5):
+    """Test for and remove erroneous data in the first half of 1973 (a common pattern). See notebook 07."""
     # see notebooks/07-tb-precipitation_data_cleaning.ipynb for threshold justification
     zscores = _test_1973_garbage_data(df)
     bad_stations = zscores.loc[zscores > zscore_thresh].index
@@ -84,6 +98,12 @@ def remove_garbage_data_1973(df: pd.DataFrame, zscore_thresh=5):
 
 
 def clean_precip_data(df: pd.DataFrame) -> pd.DataFrame:
+    """Apply all fixes to known precipitation data problems.
+
+    * bad 1973 data
+    * long gaps erroneously represented as zeros
+    * giant erroneous spikes
+    """
     if tuple(df.index.names) != ("usaf", "wban", "timestamp"):
         raise ValueError("Expect index of (usaf, wban, timestamp)")
     for exclusion_idx in (
