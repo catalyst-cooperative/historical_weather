@@ -1,4 +1,5 @@
 from typing import Callable, Dict, List, Sequence
+
 import pandas as pd
 
 idx = pd.IndexSlice
@@ -7,7 +8,7 @@ idx = pd.IndexSlice
 def _generate_pairs_from_groups(splice_groups: pd.DataFrame) -> List[pd.DataFrame]:
     """Most splice groups are pairs, but a handful have 3 stations. Convert 3+ station groups to consecutive pairs.
 
-    splice_groups comes from data/processed/splice_pairs.csv
+    splice_groups comes from data/interim/splice_pairs.csv
     """
     pairs = []
     for _, group_df in splice_groups.set_index(["usaf", "wban"]).groupby("pair_id"):

@@ -10,7 +10,7 @@ idx = pd.IndexSlice
 def _load_erroneous_precip_points(path=None) -> pd.MultiIndex:
     """Load ids of manually determined spikes. See notebook 07 for distribution analysis."""
     if path is None:
-        path = Path(__file__).resolve().parents[2] / "data/processed/erroneous_precip_points.csv"
+        path = Path(__file__).resolve().parents[2] / "data/interim/erroneous_precip_points.csv"
     data = pd.read_csv(path, parse_dates=["timestamp"], dtype={"usaf": str, "wban": str})
     out = pd.MultiIndex.from_frame(data)
     return out
@@ -19,7 +19,7 @@ def _load_erroneous_precip_points(path=None) -> pd.MultiIndex:
 def _load_erroneous_precip_years(path: Optional[Path] = None) -> List[Tuple[str, str, slice]]:
     """Load ids of manually determined near-zero precipitation years. See notebook 07 for analysis."""
     if path is None:
-        path = Path(__file__).resolve().parents[2] / "data/processed/erroneous_precip_years.csv"
+        path = Path(__file__).resolve().parents[2] / "data/interim/erroneous_precip_years.csv"
     data = pd.read_csv(path, dtype=str)
     out = [(row.usaf, row.wban, slice(row.year, row.year, None)) for row in data.itertuples()]
     return out
