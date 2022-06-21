@@ -4,9 +4,8 @@ from typing import Optional
 
 import pandas as pd
 
-import src.data.reshape as rs
+import src.data.loaders as load
 from src.analysis.precipitation import clean_precip_data
-
 
 idx = pd.IndexSlice
 
@@ -66,7 +65,7 @@ def subset_stations_again(subset: pd.DataFrame) -> pd.DataFrame:
 
 
 def get_subset():
-    gsod = rs.get_gsod()
+    gsod = load.get_gsod()
     station_meta = get_station_metadata()
     subset_cols = [
         "timestamp",
