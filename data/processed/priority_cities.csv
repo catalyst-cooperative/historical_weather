@@ -1,0 +1,21 @@
+city,state/province,country,latitude,longitude
+Phoenix,Arizona,USA,33.448377,-112.074038
+Tucson,Arizona,USA,32.222607,-110.974711
+Los Angeles,California,USA,34.052234,-118.243685
+San Francisco,California,USA,37.774930,-122.419415
+San Diego,California,USA,32.715740,-117.161080
+Denver,Colorado,USA,39.739236,-104.990251
+Boise,Idaho,USA,43.615019,-116.202314
+Billings,Montana,USA,45.783286,-108.500690
+Las Vegas,Nevada,USA,36.169941,-115.139830
+Reno,Nevada,USA,39.529919,-119.814269
+Albuquerque,New Mexico,USA,35.084386,-106.650422
+Portland,Oregon,USA,45.515232,-122.678385
+Eugene,Oregon,USA,44.052069,-123.086754
+Salt Lake City,Utah,USA,40.760779,-111.891047
+Seattle,Washington,USA,47.606209,-122.332071
+Spokane,Washington,USA,47.658780,-117.426046
+Cheyenne,Wyoming,USA,41.139981,-104.820246
+Calgary,Alberta,Canada,51.044733,-114.071883
+Edmonton,Alberta,Canada,53.546125,-113.493823
+Vancouver,British Columbia,Canada,49.282729,-123.120738
