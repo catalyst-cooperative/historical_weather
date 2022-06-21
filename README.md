@@ -20,10 +20,10 @@ Project Organization
     ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
     │
     ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
-    │   └── figures        <- Generated graphics and figures to be used in reporting    │
+    │   └── figures        <- Generated graphics and figures to be used in reporting
     │
     ├── sql_queries        <- Queries that were manually run against the GSOD dataset in BigQuery
-    |                               to produce the data files in `data/raw/`
+    |                         to produce the data files in `data/raw/`
     │
     ├── setup.py           <- makes project pip installable (pip install -e .) so src can be imported
     ├── src                <- Source code for use in this project.
