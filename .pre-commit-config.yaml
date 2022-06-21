@@ -25,7 +25,11 @@ repos:
   rev: 4.0.1
   hooks:
   - id: flake8
-    args: [--config, tox.ini]
+    args:
+      # make line length compatible with black
+      - "--max-line-length=119"
+      - "--max-complexity=18"
+      - "--select=B,C,E,F,W,T4,B9"
     additional_dependencies:
       - flake8-docstrings
       - flake8-colors
@@ -35,7 +39,6 @@ repos:
       - pep8-naming
       - pycodestyle
       - pyflakes
-      - flake8-rst-docstrings
       - flake8-use-fstring
 
 # Format the code
@@ -51,32 +54,13 @@ repos:
           \.tox|
           \.venv|
           _build|
-          build|
+          \.vscode|
+          \.pytest_cache|
+          data|
+          notebooks|
+          references|
+          reports|
+          sql_queries|
           dist"""
 
     language_version: python3.9
-
-
-- repo: local
-  hooks:
-    - id: unit-tests
-      name: unit-tests
-      stages: [commit]
-      language: system
-      verbose: false
-      pass_filenames: false
-      always_run: true
-      entry: pytest --doctest-modules src/pudl test/unit
-
-# Configuration for pre-commit.ci
-ci:
-  autofix_commit_msg: |
-    [pre-commit.ci] auto fixes from pre-commit.com hooks
-
-    For more information, see https://pre-commit.ci
-  autofix_prs: true
-  autoupdate_branch: dev
-  autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
-  autoupdate_schedule: weekly
-  skip: [unit-tests, nb-output-clear]
-  submodules: false
