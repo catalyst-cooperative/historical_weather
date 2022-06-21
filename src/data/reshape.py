@@ -7,11 +7,21 @@ from sklearn.metrics.pairwise import haversine_distances
 
 
 def _load_gsod(path: Optional[Path] = None) -> pd.DataFrame:
+    """Load raw GSOD output from BigQuery source.
+
+    Args:
+        path (Optional[Path], optional): path to source CSV. Defaults to None.
+
+    Returns:
+        pd.DataFrame: raw GSOD data
+    """
     if path is None:
         path = Path(__file__).resolve().parents[2] / "data/raw/data_candidate_stations_50km_10yr.csv"
+        error_msg = "Data source does not exist. Did you extract the .7z file in data/raw/?"
+        assert path.exists(), error_msg
     elif isinstance(path, str):
         path = Path(path)
-    assert path.exists()
+        assert path.exists()
     meta = pd.DataFrame(
         {
             "stn": [
@@ -124,6 +134,14 @@ def _load_gsod(path: Optional[Path] = None) -> pd.DataFrame:
 
 
 def _transform_gsod(gsod: pd.DataFrame) -> None:
+    """Perform basic transformations of raw GSOD data.
+
+    Replaces sentinel values (like 9999.9) with NaN.
+    Fixes a few parsing errors in the event indicator columns.
+
+    Args:
+        gsod (pd.DataFrame): transformed GSOD data
+    """
     nominal_nan = {  # from documentation
         "temp_f_mean": 9999.9,
         "temp_f_max": 9999.9,
@@ -148,14 +166,30 @@ def _transform_gsod(gsod: pd.DataFrame) -> None:
 
 
 def get_gsod(path: Optional[Path] = None) -> pd.DataFrame:
+    """Load and prep raw GSOD data from BigQuery source to a more analysis-ready state.
+
+    Args:
+        path (Optional[Path], optional): path to source CSV. Defaults to None.
+
+    Returns:
+        pd.DataFrame: GSOD data
+    """
     gsod = _load_gsod(path)
     _transform_gsod(gsod)
     return gsod
 
 
 def _extract_station_metadata(path: Optional[Path] = None) -> pd.DataFrame:
+    """Load raw station metadata from BigQuery source and set human-readable column names.
+
+    Args:
+        path (Optional[Path], optional): path to source CSV. Defaults to None.
+
+    Returns:
+        pd.DataFrame: raw station metadata
+    """
     if path is None:
-        path = Path("../data/raw/all_gsod_stations_in_wieb_territory.csv")
+        path = Path(__file__).resolve().parents[2] / "data/raw/all_gsod_stations_in_wieb_territory.csv"
     elif isinstance(path, str):
         path = Path(path)
     assert path.exists()
@@ -177,6 +211,15 @@ def _extract_station_metadata(path: Optional[Path] = None) -> pd.DataFrame:
 
 
 def _transform_station_metadata(stations: pd.DataFrame, cities: Optional[pd.DataFrame] = None) -> pd.DataFrame:
+    """Add columns identifying the nearest priority city and the stations distance to that city in km.
+
+    Args:
+        stations (pd.DataFrame): raw station metadata
+        cities (Optional[pd.DataFrame], optional): dataframe of cities and their locations. Defaults to None.
+
+    Returns:
+        pd.DataFrame: enriched station metadata
+    """
     if cities is None:
         cities = get_cities()
     distance_matrix = _calculate_distance_matrix(stations, cities)
@@ -187,8 +230,9 @@ def _transform_station_metadata(stations: pd.DataFrame, cities: Optional[pd.Data
 
 
 def get_cities(path: Optional[Path] = None) -> pd.DataFrame:
+    """Load priority cities and their locations."""
     if path is None:
-        path = Path("../data/processed/priority_cities.csv")
+        path = Path(__file__).resolve().parents[2] / "data/processed/priority_cities.csv"
     elif isinstance(path, str):
         path = Path(path)
     assert path.exists()
@@ -197,6 +241,7 @@ def get_cities(path: Optional[Path] = None) -> pd.DataFrame:
 
 
 def _calculate_distance_matrix(stations: pd.DataFrame, cities: pd.DataFrame) -> pd.DataFrame:
+    """Calculate distances between each station and each city."""
     # haversine distance gives angular distance between two points on a sphere.
     # Convert to arc length by multiplying by earth's radius
     earth_radius_km = 6371  # wikipedia
@@ -213,6 +258,7 @@ def _calculate_distance_matrix(stations: pd.DataFrame, cities: pd.DataFrame) -> 
 
 
 def _nearest_city_from_matrix(distance_matrix: pd.DataFrame) -> pd.DataFrame:
+    """Identify the nearest city for each station."""
     minima = distance_matrix.min(axis=1).astype(np.float32)
     indicators = distance_matrix.eq(minima, axis=0).stack()
     # indexing by itself filters for True. Then drop the booleans.
@@ -224,6 +270,15 @@ def _nearest_city_from_matrix(distance_matrix: pd.DataFrame) -> pd.DataFrame:
 
 
 def get_station_metadata(station_path: Optional[Path] = None, city_path: Optional[Path] = None) -> pd.DataFrame:
+    """Get metadata of GSOD stations and add information about their nearest cities and distances to those cities.
+
+    Args:
+        station_path (Optional[Path], optional): path to raw station metadata. Defaults to data already in this repo.
+        city_path (Optional[Path], optional): path to city location data. Defaults to data already in this repo.
+
+    Returns:
+        pd.DataFrame: station metadata
+    """
     stations = _extract_station_metadata(station_path)
     cities = get_cities(city_path)
     stations = _transform_station_metadata(stations, cities)
