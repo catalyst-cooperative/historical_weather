@@ -8,7 +8,7 @@ from sklearn.metrics.pairwise import haversine_distances
 
 def _load_gsod(path: Optional[Path] = None) -> pd.DataFrame:
     if path is None:
-        path = Path("../data/raw/data_candidate_stations_50km_10yr.csv")
+        path = Path(__file__).resolve().parents[2] / "data/raw/data_candidate_stations_50km_10yr.csv"
     elif isinstance(path, str):
         path = Path(path)
     assert path.exists()
