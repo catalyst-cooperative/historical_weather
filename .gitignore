@@ -75,7 +75,7 @@ target/
 # Jupyter NB Checkpoints
 .ipynb_checkpoints/
 
-# exclude raw data from source control
+# exclude large uncompressed raw data and primary output data from source control
 data/raw/data_candidate_stations_50km_10yr.csv
 data/processed/historical_weather_data.csv
 
