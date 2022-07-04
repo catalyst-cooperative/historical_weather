@@ -7,9 +7,9 @@ wieb_member_stations AS (
     -- WIEB members: US states
     WHERE country = 'US'
         AND state in ('WA', 'OR', 'CA', 'ID', 'NV', 'AZ', 'MT', 'WY', 'UT', 'CO', 'NM')
-    
-    UNION ALL 
-    
+
+    UNION ALL
+
     SELECT *
     FROM `bigquery-public-data.noaa_gsod.stations`
     -- WIEB members: CA provinces
